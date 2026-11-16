@@ -27,9 +27,10 @@ Submission of team **HSA Connection** for More Than A Hack 2027, Initial Challen
 | spellF1, leave-one-match-out over 10 external matches | Metrica | DFL (degraded) |
 |---|---:|---:|
 | Official baseline smooth50 | 0.405 | 0.214 |
-| **Our approach** | **0.646** | **0.477** |
+| **Our approach** | **0.634** | **0.478** |
+| Our approach, scored on controlled possession (opposing touches < 3 s do not count) | 0.756 | 0.591 |
 
-Submission file `output/HSA_Connection.csv`, SHA-256 `92a943257cf73aaa057aa81cf29902732b72f2b545b95410ae5b2608b1a0f8fb`, frozen on 2026-11-06.
+Submission file `output/HSA_Connection.csv`, SHA-256 `ce099b852b8cfd85550de359ed837407642a559b2ec1e3364d08cf50d5a054ae`, frozen on 2026-11-06, switching costs revised on 2026-11-16.
 
 ## Reproduction
 

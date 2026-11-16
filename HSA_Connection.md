@@ -1,6 +1,6 @@
 # HSA Connection – Technical document
 
-More Than A Hack 2027, Initial Challenge. Submission file `HSA_Connection.csv`, SHA-256 `92a943257cf73aaa057aa81cf29902732b72f2b545b95410ae5b2608b1a0f8fb`.
+More Than A Hack 2027, Initial Challenge. Submission file `HSA_Connection.csv`, SHA-256 `ce099b852b8cfd85550de359ed837407642a559b2ec1e3364d08cf50d5a054ae`.
 
 ## Approach
 
@@ -8,7 +8,7 @@ We predict possession from the tactical tracking data (ATD) alone. Because the c
 
 The pipeline has three parts. A first gradient-boosting model estimates per frame whether the ball is dead. Its features follow Lang et al. (2022): ball visibility, position of the ball relative to the lines, player speeds and team formations over the surrounding ±40 s. A second model estimates which team has the ball. Its features follow Link & Hoernig (2017): which team is closer to the ball, how long it has stayed close, pressure, plus robust team shape, which still helps when the ball is not tracked. A Viterbi decoder then turns both probabilities into coherent H/A/D spells. Switching costs prevent flickering. Finally, stoppage ends are aligned to the restart kick, and kick-offs are detected explicitly.
 
-All design choices were made by leave-one-match-out validation on the ten external matches. On these, our spellF1 is 0.65 on Metrica and 0.48 on degraded DFL, against 0.41 and 0.21 for the official baseline logic.
+All design choices were made by leave-one-match-out validation on the ten external matches. On these, our spellF1 is 0.63 on Metrica and 0.48 on degraded DFL, against 0.41 and 0.21 for the official baseline logic. Because it is open how strictly the ground truth applies "controlled" possession, the switching costs are chosen to be robust: we score them against the original labels and against versions in which opposing touches shorter than 1 to 4 s do not count, and take the costs with the smallest worst-case loss. If touches under 3 s do not count, our spellF1 is 0.76 on Metrica and 0.59 on DFL.
 
 ## Assets
 

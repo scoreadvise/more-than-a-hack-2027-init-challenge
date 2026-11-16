@@ -35,7 +35,7 @@ In addition we use the **Metrica sample matches** (notebook 03). They come from 
 
 ### 3. The possession definition
 
-The challenge asks for **controlled** possession. Mere touches do not count as a change. The approach therefore deliberately does not chase very short ping-pong spells under 3 s. Many errors are counted there, but recovering them would optimise for a label convention that is not confirmed for the challenge.
+The challenge asks for **controlled** possession. Mere touches do not count as a change. The approach therefore deliberately does not chase very short ping-pong spells under 3 s. Many errors are counted there, but recovering them would optimise for a label convention that is not confirmed for the challenge. The switching costs are chosen so that the result holds up across stricter and looser readings of control (step 4).
 
 ### 4. Methodological care
 
@@ -60,7 +60,7 @@ Tracking (ball + players, 25 fps)
    │     └─ P(H | live) ← H model (boosting, 59 features)
    │
    ├─ 4. Joint Viterbi decoder over H / A / D
-   │     switching costs c_HA = 10, c_D = 40  →  smooth, coherent spells
+   │     switching costs c_HA = 20, c_D = 40  →  smooth, coherent spells
    │
    ├─ 5. Refine restarts
    │     ├─ kick snap: end of D moves to the restart kick or pass (−6/+4 s)
@@ -101,10 +101,10 @@ Both are trained on 10 external matches: 7 DFL matches in the degraded version d
 
 Deciding frame by frame would flicker and create hundreds of micro-spells. The decoder is therefore a **Viterbi algorithm** over the three states H, A and D:
 - It uses the model probabilities as evidence.
-- Every switch costs a penalty: c_HA = 10 for H↔A and c_D = 40 for play↔stoppage.
+- Every switch costs a penalty: c_HA = 20 for H↔A and c_D = 40 for play↔stoppage.
 - It picks the label sequence with the best overall balance. A change of possession only pays off if the evidence clearly supports it for some time.
 
-Notebook 04 chooses the costs on a 4 × 4 grid by leave-one-match-out. The grid is flat around the chosen point, so the choice is robust.
+Notebook 04 chooses the costs by leave-one-match-out on an 8 × 3 grid. It is open how strictly the challenge ground truth applies "controlled" possession. Each cost pair is therefore scored against six versions of the external labels: the original labels and versions in which an opposing touch shorter than 1, 1.75, 2, 3 or 4 s is merged into the surrounding possession. For each version we measure how far a cost pair falls behind the best one on Metrica (its regret) and take the pair with the smallest worst-case regret: c_HA = 20, c_D = 40. Its worst case is 0.012 behind the best, against 0.035 for the earlier choice c_HA = 10.
 
 ### Step 5 · Restarts
 
@@ -122,11 +122,12 @@ Notebook 04 writes `output/HSA_Connection.csv`. The labels of the two graded hal
 | spellF1 | Metrica (LOMO, main criterion) | DFL d67s (LOMO) |
 |---|---:|---:|
 | Official baseline smooth50 | 0.405 | 0.214 |
-| **Our approach (frozen)** | **0.646** | **0.477** |
+| **Our approach (submission)** | **0.634** | **0.478** |
+| Our approach, scored on controlled possession (touches < 3 s do not count) | 0.756 | 0.591 |
 
 DFL scores are lower because DFL also counts very short touch spells as possession.
 
-How it improved over time (DFL d67s): baseline 0.214 → first pipeline 0.276 → dead-ball model after Lang 0.315 → possession side after Link 0.391 → team shape 0.462 → possession features in the D model 0.477. Training on Metrica raised the Metrica score from 0.611 to 0.646.
+How it improved over time (DFL d67s): baseline 0.214 → first pipeline 0.276 → dead-ball model after Lang 0.315 → possession side after Link 0.391 → team shape 0.462 → possession features in the D model 0.477. Training on Metrica raised the Metrica score from 0.611 to 0.646. Choosing the costs robustly over possession definitions (c_HA 10 → 20) costs 0.012 on the original Metrica labels but gains 0.019 on Metrica and 0.017 on DFL when touches under 3 s do not count; all 10 matches improve there.
 
 ## What it deliberately does not do, and why
 
