@@ -1,0 +1,10 @@
+# Data that is not published (challenge data, raw data, intermediate files)
+tactical/*
+!tactical/README.md
+external_data/*/raw/
+artifacts/
+
+# macOS / Jupyter
+._*
+.DS_Store
+.ipynb_checkpoints/
